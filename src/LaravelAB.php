@@ -17,7 +17,7 @@ class LaravelAB
 
     protected function boot()
     {
-        foreach (config('ab.experiments') as $experiment => $goals) {
+        foreach (config('ab.experiments') as $experiment => $variants) {
             $this->getOrSetUserKey($experiment);
         }
     }
