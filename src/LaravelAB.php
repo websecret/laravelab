@@ -1,5 +1,6 @@
 <?php namespace Secret\LaravelAB;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 
 class LaravelAB
@@ -25,19 +26,23 @@ class LaravelAB
     protected function getOrSetUserKey($experiment)
     {
         $variantsCount = count(config('ab.experiments.' . $experiment));
+        $cookieName = $this->getCookieName($experiment);
         $cookieValue = rand(0, $variantsCount - 1);
-        $cookieName = 'ab-' . $experiment;
         if (!Cookie::has($cookieName)) {
-            $this->app['request']->cookie($cookieName, $cookieValue);
+            Cookie::forever($cookieName, $cookieValue);
         }
     }
 
     public function getVariant($experiment)
     {
-        $cookieName = 'ab-' . $experiment;
+        $cookieName = $this->getCookieName($experiment);
         $cookieValue = Cookie::get($cookieName);
         $variant = config('ab.experiments.' . $experiment . '.' . $cookieValue);
         return $variant;
+    }
+
+    protected function getCookieName($experiment) {
+        return config('ab.prefix') . $experiment;
     }
 
 }
