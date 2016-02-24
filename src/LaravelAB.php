@@ -25,7 +25,7 @@ class LaravelAB
     protected function getOrSetUserKey($experiment)
     {
         $variantsCount = count(config('ab.experiments.' . $experiment));
-        $cookieValue = rand(1, $variantsCount);
+        $cookieValue = rand(0, $variantsCount - 1);
         $cookieName = 'ab-' . $experiment;
         if (!Cookie::has($cookieName)) {
             $this->app['request']->cookie($cookieName, $cookieValue);
