@@ -12,7 +12,7 @@ class LaravelAB
             if(is_null($cookie)) {
                 continue;
             }
-            $response->withCookie();
+            $response->withCookie($cookie);
         }
         return $response;
     }
