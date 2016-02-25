@@ -1,18 +1,12 @@
 <?php namespace Secret\LaravelAB;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 
 class LaravelAB
 {
-    protected $app;
 
-    public function __construct($app = null)
+    public function __construct()
     {
-        if (!$app) {
-            $app = app();
-        }
-        $this->app = $app;
         $this->boot();
     }
 
@@ -33,12 +27,15 @@ class LaravelAB
         }
     }
 
-    public function getVariant($experiment)
+    public function getVariant($experiment, $variant = null)
     {
         $cookieName = $this->getCookieName($experiment);
         $cookieValue = Cookie::get($cookieName);
-        $variant = config('ab.experiments.' . $experiment . '.' . $cookieValue);
-        return $variant;
+        $userVariant = config('ab.experiments.' . $experiment . '.' . $cookieValue);
+        if($variant) {
+            return $userVariant == $variant;
+        }
+        return $userVariant;
     }
 
     protected function getCookieName($experiment) {

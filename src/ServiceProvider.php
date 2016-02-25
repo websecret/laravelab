@@ -5,6 +5,8 @@ use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 class ServiceProvider extends BaseServiceProvider
 {
 
+    protected $defer = false;
+
     public function provides()
     {
         return ['ab'];
@@ -13,11 +15,10 @@ class ServiceProvider extends BaseServiceProvider
 
     public function register()
     {
-        $this->app->singleton('ab', function ($app) {
-            $ab = new LaravelAB($app);
+        $this->app->singleton('ab', function () {
+            $ab = new LaravelAB();
             return $ab;
-        }
-        );
+        });
     }
 
 
