@@ -5,14 +5,14 @@ use Illuminate\Support\Facades\Cookie;
 class LaravelAB
 {
 
-    public function __construct()
-    {
-    }
-
-    public function boot($request, $response)
+    public function handle($request, $response)
     {
         foreach (config('ab.experiments') as $experiment => $variants) {
-            $response->withCookie($this->getOrSetUserKey($request, $response, $experiment));
+            $cookie = $this->getOrSetUserKey($request, $response, $experiment);
+            if(is_null($cookie)) {
+                continue;
+            }
+            $response->withCookie();
         }
         return $response;
     }
@@ -23,12 +23,10 @@ class LaravelAB
         $cookieName = $this->getCookieName($experiment);
         $cookieValue = rand(0, $variantsCount - 1);
         $oldCookieValue = $request->cookie($cookieName);
-        if ($oldCookieValue === null) {
-            $cookie = cookie()->forever($cookieName, $cookieValue);
-        } else {
-            $cookie = cookie()->forever($cookieName, $oldCookieValue);
+        if(!is_null($oldCookieValue)) {
+            return null;
         }
-        return $cookie;
+        return cookie()->forever($cookieName, $cookieValue);
     }
 
     public function getVariant($experiment, $variant = null)
