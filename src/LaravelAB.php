@@ -7,24 +7,28 @@ class LaravelAB
 
     public function __construct()
     {
-        $this->boot();
     }
 
-    protected function boot()
+    public function boot($request, $response)
     {
         foreach (config('ab.experiments') as $experiment => $variants) {
-            $this->getOrSetUserKey($experiment);
+            $response->withCookie($this->getOrSetUserKey($request, $response, $experiment));
         }
+        return $response;
     }
 
-    protected function getOrSetUserKey($experiment)
+    protected function getOrSetUserKey($request, $experiment)
     {
         $variantsCount = count(config('ab.experiments.' . $experiment));
         $cookieName = $this->getCookieName($experiment);
         $cookieValue = rand(0, $variantsCount - 1);
-        if (!Cookie::has($cookieName)) {
-            Cookie::forever($cookieName, $cookieValue);
+        $oldCookieValue = $request->cookie($cookieName);
+        if ($oldCookieValue === null) {
+            $cookie = cookie()->forever($cookieName, $cookieValue);
+        } else {
+            $cookie = cookie()->forever($cookieName, $oldCookieValue);
         }
+        return $cookie;
     }
 
     public function getVariant($experiment, $variant = null)

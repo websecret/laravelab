@@ -31,6 +31,14 @@ class ServiceProvider extends BaseServiceProvider
         $this->publishes([
             $configFile => config_path('ab.php')
         ]);
+
+        $this->registerMiddleware('Websecret\LaravelAB\Middleware\LaravelAB');
+    }
+
+    protected function registerMiddleware($middleware)
+    {
+        $kernel = $this->app['Illuminate\Contracts\Http\Kernel'];
+        $kernel->pushMiddleware($middleware);
     }
 
 }
