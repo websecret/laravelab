@@ -1,15 +1,16 @@
 {
-    "name": "secret/laravelab",
-    "description": "Laravel AB Package",
-    "homepage": "https://github.com/secret/laravel-ab",
+    "name": "websecret/laravelab",
+    "description": "Laravel AB testing package",
+    "keywords": ["a/b", "ab", "laravel"],
     "license": "MIT",
+    "authors": [],
     "require": {
         "php": ">=5.4.0",
-        "illuminate/support": "^5.0"
+        "illuminate/support": "^5.*",
     },
     "autoload": {
         "psr-4": {
-            "Secret\\LaravelAB\\": "src/"
+            "Websecret\\LaravelAB\\": "src/"
         }
     }
 }

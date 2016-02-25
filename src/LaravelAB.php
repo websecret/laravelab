@@ -1,4 +1,4 @@
-<?php namespace Secret\LaravelAB;
+<?php namespace Websecret\LaravelAB;
 
 use Illuminate\Support\Facades\Cookie;
 

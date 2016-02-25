@@ -1,1 +1,1 @@
-# secret-laravelab
+# websecret/laravelab
