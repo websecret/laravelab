@@ -8,7 +8,7 @@ class LaravelAB
     public function handle($request, $response)
     {
         foreach (config('ab.experiments') as $experiment => $variants) {
-            $cookie = $this->getOrSetUserKey($request, $response, $experiment);
+            $cookie = $this->getOrSetUserKey($request, $experiment);
             if(is_null($cookie)) {
                 continue;
             }
