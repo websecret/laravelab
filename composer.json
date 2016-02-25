@@ -1,7 +1,7 @@
 {
     "name": "websecret/laravelab",
     "description": "Laravel AB testing package",
-    "keywords": ["a/b", "ab", "laravel"],
+    "keywords": ["ab", "laravel"],
     "license": "MIT",
     "authors": [],
     "require": {
