@@ -42,4 +42,16 @@ class LaravelAB
         return config('ab.prefix') . $experiment;
     }
 
+    public function clear($experiment = null) {
+        if($experiment) {
+            $cookieName = $this->getCookieName($experiment);
+            Cookie::forget($cookieName);
+        } else {
+            foreach (config('ab.experiments') as $experiment => $variants) {
+                $cookieName = $this->getCookieName($experiment);
+                Cookie::forget($cookieName);
+            }
+        }
+    }
+
 }
