@@ -2,14 +2,13 @@
 
 namespace Websecret\LaravelAB;
 
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cookie;
 
 class LaravelAB
 {
     protected static $generatedVariants = [];
 
-    public function handle(Response $response)
+    public function handle($response)
     {
         foreach (static::$generatedVariants as $experiment => $variant) {
             $response->withCookie(cookie()->forever($this->getCookieName($experiment), $variant));
