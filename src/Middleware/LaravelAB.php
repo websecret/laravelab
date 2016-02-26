@@ -16,7 +16,7 @@ class LaravelAB
     public function handle($request, Closure $next)
     {
         $response = $next($request);
-        $response = $this->ab->handle($request, $response);
+        $response = $this->ab->handle($response);
         return $response;
     }
 
