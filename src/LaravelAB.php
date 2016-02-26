@@ -1,59 +1,66 @@
-<?php namespace Websecret\LaravelAB;
+<?php
 
+namespace Websecret\LaravelAB;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cookie;
 
 class LaravelAB
 {
+    protected static $generatedVariants = [];
 
-    public function handle($request, $response)
+    public function handle(Request $request, Response $response)
     {
-        foreach (config('ab.experiments') as $experiment => $variants) {
-            $cookie = $this->getOrSetUserKey($request, $experiment);
-            if(is_null($cookie)) {
-                continue;
-            }
-            $response->withCookie($cookie);
+        foreach (static::$generatedVariants as $experiment => $variant) {
+            $response->withCookie(cookie()->forever($this->getCookieName($experiment), $variant));
         }
+
         return $response;
-    }
-
-    protected function getOrSetUserKey($request, $experiment)
-    {
-        $variantsCount = count(config('ab.experiments.' . $experiment));
-        $cookieName = $this->getCookieName($experiment);
-        $cookieValue = rand(0, $variantsCount - 1);
-        $oldCookieValue = $request->cookie($cookieName);
-        if(!is_null($oldCookieValue)) {
-            return null;
-        }
-        return cookie()->forever($cookieName, $cookieValue);
     }
 
     public function getVariant($experiment, $variant = null)
     {
-        $cookieName = $this->getCookieName($experiment);
-        $cookieValue = Cookie::get($cookieName);
-        $userVariant = config('ab.experiments.' . $experiment . '.' . $cookieValue);
-        if($variant) {
+        $experimentVariant = $this->getExperimentVariant($experiment);
+
+        $userVariant = config('ab.experiments.' . $experiment . '.' . $experimentVariant);
+        if ($variant) {
             return $userVariant == $variant;
         }
+
         return $userVariant;
+    }
+
+    protected function getExperimentVariant($experiment)
+    {
+        $generatedVariant = array_get(static::$generatedVariants, $experiment, null);
+        if ($generatedVariant !== null) {
+            return $generatedVariant;
+        }
+
+        $cookieVariant = Cookie::get($this->getCookieName($experiment));
+        if ($cookieVariant !== null) {
+            return $cookieVariant;
+        }
+
+        return $this->generateExperimentVariant($experiment);
+    }
+
+    protected function setExperimentVariant($experiment, $variant)
+    {
+        static::$generatedVariants[$experiment] = $variant;
+    }
+
+    protected function generateExperimentVariant($experiment)
+    {
+        $variantsCount = count(config('ab.experiments.' . $experiment));
+        $variant = rand(0, $variantsCount - 1);
+        $this->setExperimentVariant($experiment, $variant);
+
+        return $variant;
     }
 
     protected function getCookieName($experiment) {
         return config('ab.prefix') . $experiment;
     }
-
-    public function clear($experiment = null) {
-        if($experiment) {
-            $cookieName = $this->getCookieName($experiment);
-            Cookie::forget($cookieName);
-        } else {
-            foreach (config('ab.experiments') as $experiment => $variants) {
-                $cookieName = $this->getCookieName($experiment);
-                Cookie::forget($cookieName);
-            }
-        }
-    }
-
 }
