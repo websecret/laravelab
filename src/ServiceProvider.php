@@ -32,7 +32,7 @@ class ServiceProvider extends BaseServiceProvider
             $configFile => config_path('ab.php')
         ]);
 
-        $this->registerMiddleware('Websecret\LaravelAB\Middleware\LaravelAB');
+        //$this->registerMiddleware('Websecret\LaravelAB\Middleware\LaravelAB');
     }
 
     protected function registerMiddleware($middleware)
