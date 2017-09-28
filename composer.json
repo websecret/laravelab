@@ -12,5 +12,15 @@
         "psr-4": {
             "Websecret\\LaravelAB\\": "src/"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Websecret\\LaravelAB\\ServiceProvider"
+            ],
+            "aliases": {
+                "AB": "Websecret\\LaravelAB\\Facade"
+            }
+        }
     }
 }
